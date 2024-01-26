@@ -1,16 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MouseWorld : MonoBehaviour
 {
-    void Update()
+    public static MouseWorld Instance { get; private set; }
+
+    [SerializeField] private LayerMask layerMask;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    private void Update()
+    {
+        transform.position = GetMousePos();
+    }
+
+    public static Vector3 GetMousePos()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit))
-        {
-            Vector3 hitPos = hit.point;
-            transform.position = hitPos;
-        }
+        Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, Instance.layerMask);
+        return hit.point;
     }
 }

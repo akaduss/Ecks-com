@@ -1,0 +1,4 @@
+repository "Ecks-com@Akadus@cloud"
+  path "/"
+    br "/main"
+    co "/main"
