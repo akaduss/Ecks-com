@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
@@ -8,14 +10,24 @@ public class Unit : MonoBehaviour
 
     [SerializeField] private float moveSpeed;
     [SerializeField] private float rotationSpeed;
+    [SerializeField] private GameObject outline;
     private Vector3 targetPos;
+    private GridPosition gridPosition;
+    public GridPosition GridPosition => gridPosition;
 
     [SerializeField] private Animator animator;
 
-    private void Start()
+    private void Awake()
     {
         targetPos = transform.position;
     }
+
+    private void Start()
+    {
+        gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
+        LevelGrid.Instance.SetUnitAtGrid(this);
+    }
+
 
     void Update()
     {
@@ -38,13 +50,20 @@ public class Unit : MonoBehaviour
 
         }
 
-        if (Input.GetMouseButtonDown(0))
+        GridPosition newGridPosition = LevelGrid.Instance.GetGridPosition(targetPos);
+        if (newGridPosition.Equals(GridPosition) == false)
         {
-            Move(MouseWorld.GetMousePos());
+            LevelGrid.Instance.ChangeUnitGridPosition(this, newGridPosition);
+            gridPosition = newGridPosition;
         }
     }
 
-    private void Move(Vector3 targetPos)
+    public void SetOutline(bool value)
+    {
+        outline.SetActive(value);
+    }
+
+    public void Move(Vector3 targetPos)
     {
         targetPos.y = 0;
         this.targetPos = targetPos;
