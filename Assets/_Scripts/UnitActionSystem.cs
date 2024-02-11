@@ -30,7 +30,7 @@ public class UnitActionSystem : MonoBehaviour
                 GridPosition gridPosition = LevelGrid.Instance.GetGridPosition(targetPos);
                 if (LevelGrid.Instance.GetUnitByGridPosition(gridPosition) == null)
                 {
-                    selectedUnit.Move(GridSystem.GetWorldPosition(gridPosition));
+                    //selectedUnit.Move(GridSystem.GetWorldPosition(gridPosition));
                 }
             }
         }

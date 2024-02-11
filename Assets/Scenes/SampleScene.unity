@@ -173,6 +173,7 @@ MonoBehaviour:
   zoomLerpingValue: 90
   minFollowY: 1
   maxFollowY: 20
+  moveSpeed: 10
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
