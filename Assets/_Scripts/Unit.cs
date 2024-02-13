@@ -1,52 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    private const string IS_WALKING = "IsWalking";
-
-    [SerializeField] private float moveSpeed;
-    [SerializeField] private float rotationSpeed;
-    private Vector3 targetPos;
+    [SerializeField] private GameObject outline;
+    private GridPosition gridPosition;
+    public GridPosition GridPosition => gridPosition;
 
     [SerializeField] private Animator animator;
 
     private void Start()
     {
-        targetPos = transform.position;
+        gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
+        LevelGrid.Instance.SetUnitAtGrid(this);
     }
+
 
     void Update()
     {
-        const float stopDistance = 0.1f;
-        if (Vector3.Distance(transform.position, targetPos) > stopDistance)
+
+        GridPosition newGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
+        if (newGridPosition.Equals(GridPosition) == false)
         {
-            Vector3 moveDir = (targetPos - transform.position).normalized;
-            moveDir.y = 0;
-
-            transform.position += moveSpeed * Time.deltaTime * moveDir;
-
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveDir), Time.deltaTime * rotationSpeed);
-
-            animator.SetBool(IS_WALKING, true);
-        }
-        else
-        {
-            transform.position = targetPos;
-            animator.SetBool(IS_WALKING, false);
-
-        }
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            Move(MouseWorld.GetMousePos());
+            LevelGrid.Instance.ChangeUnitGridPosition(this, newGridPosition);
+            gridPosition = newGridPosition;
         }
     }
 
-    private void Move(Vector3 targetPos)
+    public void SetOutline(bool value)
     {
-        targetPos.y = 0;
-        this.targetPos = targetPos;
+        outline.SetActive(value);
     }
 }
