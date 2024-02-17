@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class MoveAction : MonoBehaviour
@@ -11,11 +12,13 @@ public class MoveAction : MonoBehaviour
     [SerializeField] private float rotationSpeed;
     private Animator animator;
 
+    [SerializeField] private int maxMoveDistance = 4;
+
     private void Awake()
     {
         targetPos = transform.position;
         unit = GetComponent<Unit>();
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
 
     }
 
@@ -34,6 +37,7 @@ public class MoveAction : MonoBehaviour
             transform.position += moveSpeed * Time.deltaTime * moveDir;
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveDir), Time.deltaTime * rotationSpeed);
             animator.SetBool(IS_WALKING, true);
+            Move(targetPos);
         }
         else
         {
@@ -46,6 +50,40 @@ public class MoveAction : MonoBehaviour
     {
         targetPos.y = 0;
         this.targetPos = targetPos;
+    }
+
+    public bool IsValidActionGridPosition(GridPosition gridPosition) => GetGridsInRange().Contains(gridPosition);
+
+    public List<GridPosition> GetGridsInRange()
+    {
+        List<GridPosition> gridsInRange = new();
+        GridPosition unitGridPosition = unit.GridPosition;
+        for (int x = -maxMoveDistance; x <= maxMoveDistance; x++)
+        {
+            for (int z = -maxMoveDistance; z <= maxMoveDistance; z++)
+            {
+                GridPosition offset = new(x, z);
+                GridPosition gridPos = unitGridPosition + offset;
+
+                if (LevelGrid.Instance.IsWithinGrid(gridPos) == false)
+                {
+                    continue;
+                }
+
+                if (gridPos.Equals(unitGridPosition))
+                {
+                    continue;
+                }
+
+                if(LevelGrid.Instance.IsGridOccupied(gridPos))
+                {
+                    continue;
+                }
+
+                gridsInRange.Add(gridPos);
+            }
+        }
+        return gridsInRange;
     }
 
 }

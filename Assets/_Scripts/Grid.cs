@@ -27,6 +27,15 @@ public struct GridPosition
     {
         return HashCode.Combine(x, z);
     }
+
+    public static GridPosition operator +(GridPosition a, GridPosition b)
+    {
+        return new GridPosition(a.x + b.x, a.z + b.z);
+    }
+    public static GridPosition operator -(GridPosition a, GridPosition b)
+    {
+        return new GridPosition(a.x - b.x, a.z - b.z);
+    }
 }
 
 public class Grid
@@ -43,7 +52,6 @@ public class Grid
         GridPosition = gridPosition;
     }
 
-
     public override string ToString()
     {
         if (Unit == null)
@@ -54,5 +62,10 @@ public class Grid
         {
             return GridPosition.ToString() + "\n" + Unit.name;
         }
+    }
+
+    public bool HasUnit()
+    {
+        return Unit != null;
     }
 }

@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class UnitActionSystem : MonoBehaviour
@@ -20,47 +19,33 @@ public class UnitActionSystem : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            HandleUnitSelection();
+            if(TryHandleUnitSelection()) return;
 
-            //Move selected unit to mouse position if grid is not occupied by another unit
-            if (selectedUnit != null && MouseWorld.GetMousePos() != null)
+            GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetMousePos());
+            if (selectedUnit.MoveAction.IsValidActionGridPosition(mouseGridPosition))
             {
-                //Move selected unit to grid position
-                Vector3 targetPos = MouseWorld.GetMousePos();
-                GridPosition gridPosition = LevelGrid.Instance.GetGridPosition(targetPos);
-                if (LevelGrid.Instance.GetUnitByGridPosition(gridPosition) == null)
-                {
-                    //selectedUnit.Move(GridSystem.GetWorldPosition(gridPosition));
-                }
+                selectedUnit.MoveAction.Move(LevelGrid.Instance.GetWorldPosition(mouseGridPosition));
             }
         }
     }
 
     //Handle unit selection from mouseposition raycast
-    public void HandleUnitSelection()
+    public bool TryHandleUnitSelection()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit, 1000, unitLayer))
+
+        if (Physics.Raycast(ray, out RaycastHit hit, 1000, unitLayer) && hit.collider.TryGetComponent(out Unit newSelectedUnit))
         {
-            //Select new unit, unselect old unit
             if (selectedUnit != null)
-            {
                 selectedUnit.SetOutline(false);
-                if (hit.collider.GetComponent<Unit>() != null)
-                {
-                    selectedUnit = hit.collider.GetComponent<Unit>();
-                    selectedUnit.SetOutline(true);
-                }
-            }
-            else
-            {
-                //Select new unit if no unit is selected
-                if (hit.collider.TryGetComponent(out selectedUnit))
-                {
-                    selectedUnit.SetOutline(true);
-                }
-            }
+
+            selectedUnit = newSelectedUnit;
+            selectedUnit.SetOutline(true);
+
+            return true;
         }
+
+        return false;
     }
 
 

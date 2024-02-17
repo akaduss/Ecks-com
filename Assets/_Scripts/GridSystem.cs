@@ -20,12 +20,12 @@ public class GridSystem
         }
     }
 
-    public static Vector3 GetWorldPosition(GridPosition gridPosition)
+    public Vector3 GetWorldPosition(GridPosition gridPosition)
     {
         return new Vector3(gridPosition.x, 0, gridPosition.z) * cellSize;
     }
 
-    public static GridPosition GetGridPosition(Vector3 worldPos)
+    public GridPosition GetGridPosition(Vector3 worldPos)
     {
         return new GridPosition(Mathf.RoundToInt(worldPos.x / cellSize), Mathf.RoundToInt(worldPos.z / cellSize));
     }
@@ -49,6 +49,12 @@ public class GridSystem
             Transform prefab = Transform.Instantiate(debugPrefab, GetWorldPosition(grid.GridPosition), Quaternion.identity);
             prefab.GetComponent<GridDebugObject>().SetGridObject(grid);
         }
-    }   
+    }  
+    
+    public bool IsWithinGrid(GridPosition gridPosition)
+    {
+        return gridPosition.x >= 0 && gridPosition.x < gridArray.GetLength(0) && 
+            gridPosition.z >= 0 && gridPosition.z < gridArray.GetLength(1);
+    }
 
 }

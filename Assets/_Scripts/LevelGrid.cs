@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,11 @@ public class LevelGrid : MonoBehaviour
     [SerializeField] private Transform debugPrefab;
     private GridSystem gridSystem;
 
+    [SerializeField] private int width;
+    [SerializeField] private int height;
+    public int GetWidth => width;
+    public int GetHeight => height;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -21,7 +27,7 @@ public class LevelGrid : MonoBehaviour
             Instance = this;
         }
 
-        gridSystem = new GridSystem(10, 10);
+        gridSystem = new GridSystem(width, height);
     }
 
     private void Start()
@@ -52,16 +58,14 @@ public class LevelGrid : MonoBehaviour
         newGrid.Unit = unit;
     }
 
-    public Unit GetUnitByGridPosition(GridPosition gridPosition)
-    {
-        Grid grid = gridSystem.GetGridFromGridPosition(gridPosition);
-        return grid.Unit;
-    }
+    public Unit GetUnitByGridPosition(GridPosition gridPosition) => gridSystem.GetGridFromGridPosition(gridPosition)?.Unit;
 
-    //Get grid position from world position
-    public GridPosition GetGridPosition(Vector3 worldPos)
-    {
-        return gridSystem.GetGridFromWorldPos(worldPos).GridPosition;
-    }
+    public GridPosition GetGridPosition(Vector3 worldPosition) => gridSystem.GetGridPosition(worldPosition);
+
+    public Vector3 GetWorldPosition(GridPosition gridPosition) => gridSystem.GetWorldPosition(gridPosition);
+
+    public bool IsWithinGrid(GridPosition gridPosition) => gridSystem.IsWithinGrid(gridPosition);
+
+    public bool IsGridOccupied(GridPosition gridPosition) => gridSystem.GetGridFromGridPosition(gridPosition).HasUnit();
 
 }
