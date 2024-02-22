@@ -1,10 +1,10 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveAction : MonoBehaviour
+public class MoveAction : BaseAction
 {
-    private Unit unit;
-
     private const string IS_WALKING = "IsWalking";
 
     private Vector3 targetPos;
@@ -14,43 +14,52 @@ public class MoveAction : MonoBehaviour
 
     [SerializeField] private int maxMoveDistance = 4;
 
-    private void Awake()
+    protected override void Awake()
     {
-        targetPos = transform.position;
-        unit = GetComponent<Unit>();
+        base.Awake();
         animator = GetComponentInChildren<Animator>();
-
+        targetPos = transform.position;
     }
 
     private void Update()
     {
+        if (isActive == false)
+            return;
+
         GetMoveAction();
     }
 
     public void GetMoveAction()
     {
-        const float stopDistance = 0.1f;
-        if (Vector3.Distance(transform.position, targetPos) > stopDistance)
+        Vector3 moveDirection = (targetPos - transform.position).normalized;
+
+        float stoppingDistance = .1f;
+        if (Vector3.Distance(transform.position, targetPos) > stoppingDistance)
         {
-            Vector3 moveDir = (targetPos - transform.position).normalized;
-            moveDir.y = 0;
-            transform.position += moveSpeed * Time.deltaTime * moveDir;
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveDir), Time.deltaTime * rotationSpeed);
+            float moveSpeed = 4f;
+            transform.position += moveDirection * moveSpeed * Time.deltaTime;
+
             animator.SetBool(IS_WALKING, true);
-            Move(targetPos);
         }
         else
         {
-            transform.position = targetPos;
             animator.SetBool(IS_WALKING, false);
+            isActive = false;
+            OnActionDone();
         }
+
+        float rotateSpeed = 10f;
+        transform.forward = Vector3.Lerp(transform.forward, moveDirection, Time.deltaTime * rotateSpeed);
+
     }
 
-    public void Move(Vector3 targetPos)
+    public void Move(GridPosition gridPosition, Action OnActionDone)
     {
-        targetPos.y = 0;
-        this.targetPos = targetPos;
+        this.OnActionDone = OnActionDone;
+        this.targetPos = LevelGrid.Instance.GetWorldPosition(gridPosition);
+        isActive = true;
     }
+
 
     public bool IsValidActionGridPosition(GridPosition gridPosition) => GetGridsInRange().Contains(gridPosition);
 
