@@ -189,8 +189,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 34875475}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.46181035, y: -0.000000015261696, z: 0.0000000079460865, w: 0.88697875}
-  m_LocalPosition: {x: 0, y: 10, z: -7}
+  m_LocalRotation: {x: 0.30517742, y: 0.000000016385558, z: -0.0000000052509983, w: 0.95229554}
+  m_LocalPosition: {x: 0, y: 5, z: -7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -288,7 +288,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BindingMode: 1
-  m_FollowOffset: {x: 0, y: 10, z: -7}
+  m_FollowOffset: {x: 0, y: 5, z: -7}
   m_XDamping: 0
   m_YDamping: 0
   m_ZDamping: 0
@@ -434,7 +434,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -483,8 +483,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.46181035, y: -0.000000015261696, z: 0.0000000079460865, w: 0.88697875}
-  m_LocalPosition: {x: 0, y: 10, z: -7}
+  m_LocalRotation: {x: 0.30517742, y: 0.000000016385558, z: -0.0000000052509983, w: 0.95229554}
+  m_LocalPosition: {x: 0, y: 5, z: -7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -864,6 +864,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d39a39f167fb9054192aa995d62a95d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  actionButtonPrefab: {fileID: 399835572316222404, guid: 40f276d60fc32744b9ba8b9d5db5a02c,
+    type: 3}
+  actionButtonContainerTransform: {fileID: 259756156}
 --- !u!1 &1195333654
 GameObject:
   m_ObjectHideFlags: 0
@@ -909,6 +912,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0c9c4c04fe09ff459dbd58d7536390e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedAction: {fileID: 0}
   selectedUnit: {fileID: 0}
   unitLayer:
     serializedVersion: 2
@@ -1112,7 +1116,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
+  m_VertexColorAlwaysGammaSpace: 1
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0

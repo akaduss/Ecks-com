@@ -95,4 +95,8 @@ public class MoveAction : BaseAction
         return gridsInRange;
     }
 
+    public override string GetActionName()
+    {
+        return "Move";
+    }
 }

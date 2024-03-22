@@ -67,5 +67,4 @@ public class LevelGrid : MonoBehaviour
     public bool IsWithinGrid(GridPosition gridPosition) => gridSystem.IsWithinGrid(gridPosition);
 
     public bool IsGridOccupied(GridPosition gridPosition) => gridSystem.GetGridFromGridPosition(gridPosition).HasUnit();
-
 }

@@ -1,8 +1,13 @@
+using System;
 using UnityEngine;
 
 public class UnitActionSystem : MonoBehaviour
 {
     public static UnitActionSystem Instance { get; private set; }
+    public Action OnSelectedUnitChanged;
+    public Action OnSelectedActionChanged;
+
+    public BaseAction selectedAction;
 
     [SerializeField] private Unit selectedUnit;
     public Unit[] Units { get; set;}
@@ -18,17 +23,37 @@ public class UnitActionSystem : MonoBehaviour
 
     private void Update()
     {
+        if (isBusy)
+        {
+            return;
+        }
+
+
         if (Input.GetMouseButtonDown(0))
         {
-            if(TryHandleUnitSelection()) return;
-
-            GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetMousePos());
-            if (selectedUnit.MoveAction.IsValidActionGridPosition(mouseGridPosition))
-            {
-                SetBusy();
-                selectedUnit.MoveAction.Move(mouseGridPosition, SetNotBusy);
-            }
+            if (TryHandleUnitSelection()) return;
+            HandleSelectedAction();
         }
+    }
+
+    private void HandleSelectedAction()
+    {
+        GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetMousePos());
+        OnSelectedActionChanged?.Invoke();
+
+        switch (selectedAction)
+        {
+            case MoveAction moveAction:
+                if (moveAction.IsValidActionGridPosition(mouseGridPosition))
+                {
+                    SetBusy();
+                    moveAction.Move(mouseGridPosition, SetNotBusy);
+                }
+                break;
+
+        }
+
+
     }
 
     //Handle unit selection from mouseposition raycast
@@ -43,6 +68,9 @@ public class UnitActionSystem : MonoBehaviour
 
             selectedUnit = newSelectedUnit;
             selectedUnit.SetOutline(true);
+            selectedAction = newSelectedUnit.MoveAction;
+
+            OnSelectedUnitChanged?.Invoke();
 
             return true;
         }

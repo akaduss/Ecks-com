@@ -9,10 +9,13 @@ public class Unit : MonoBehaviour
     private GridPosition gridPosition;
     public GridPosition GridPosition => gridPosition;
     public MoveAction MoveAction => moveAction;
+    private BaseAction[] baseActions;
+    public BaseAction[] GetBaseActions => baseActions;
 
     private void Awake()
     {
         moveAction = GetComponent<MoveAction>();
+        baseActions = GetComponents<BaseAction>();
     }
 
     private void Start()
