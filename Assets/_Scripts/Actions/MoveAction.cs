@@ -7,34 +7,29 @@ public class MoveAction : BaseAction
 {
     private const string IS_WALKING = "IsWalking";
 
-    private Vector3 targetPos;
-    [SerializeField] private float moveSpeed;
-    [SerializeField] private float rotationSpeed;
     private Animator animator;
-
     [SerializeField] private int maxMoveDistance = 4;
+
+    private Vector3 targetPosition;
 
     protected override void Awake()
     {
         base.Awake();
         animator = GetComponentInChildren<Animator>();
-        targetPos = transform.position;
+        targetPosition = transform.position;
     }
 
     private void Update()
     {
-        if (isActive == false)
+        if (!isActive)
+        {
             return;
+        }
 
-        GetMoveAction();
-    }
-
-    public void GetMoveAction()
-    {
-        Vector3 moveDirection = (targetPos - transform.position).normalized;
+        Vector3 moveDirection = (targetPosition - transform.position).normalized;
 
         float stoppingDistance = .1f;
-        if (Vector3.Distance(transform.position, targetPos) > stoppingDistance)
+        if (Vector3.Distance(transform.position, targetPosition) > stoppingDistance)
         {
             float moveSpeed = 4f;
             transform.position += moveDirection * moveSpeed * Time.deltaTime;
@@ -45,58 +40,62 @@ public class MoveAction : BaseAction
         {
             animator.SetBool(IS_WALKING, false);
             isActive = false;
-            OnActionDone();
+            onActionComplete();
         }
 
         float rotateSpeed = 10f;
         transform.forward = Vector3.Lerp(transform.forward, moveDirection, Time.deltaTime * rotateSpeed);
-
     }
 
-    public void Move(GridPosition gridPosition, Action OnActionDone)
+
+    public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        this.OnActionDone = OnActionDone;
-        this.targetPos = LevelGrid.Instance.GetWorldPosition(gridPosition);
+        this.onActionComplete = onActionComplete;
+        this.targetPosition = LevelGrid.Instance.GetWorldPosition(gridPosition);
         isActive = true;
     }
 
-
-    public bool IsValidActionGridPosition(GridPosition gridPosition) => GetGridsInRange().Contains(gridPosition);
-
-    public List<GridPosition> GetGridsInRange()
+    public override List<GridPosition> GetValidActionGridPositionList()
     {
-        List<GridPosition> gridsInRange = new();
+        List<GridPosition> validGridPositionList = new List<GridPosition>();
+
         GridPosition unitGridPosition = unit.GridPosition;
+
         for (int x = -maxMoveDistance; x <= maxMoveDistance; x++)
         {
             for (int z = -maxMoveDistance; z <= maxMoveDistance; z++)
             {
-                GridPosition offset = new(x, z);
-                GridPosition gridPos = unitGridPosition + offset;
+                GridPosition offsetGridPosition = new GridPosition(x, z);
+                GridPosition testGridPosition = unitGridPosition + offsetGridPosition;
 
-                if (LevelGrid.Instance.IsWithinGrid(gridPos) == false)
+                if (!LevelGrid.Instance.IsWithinGrid(testGridPosition))
                 {
                     continue;
                 }
 
-                if (gridPos.Equals(unitGridPosition))
+                if (unitGridPosition.Equals(testGridPosition))
                 {
+                    // Same Grid Position where the unit is already at
                     continue;
                 }
 
-                if(LevelGrid.Instance.IsGridOccupied(gridPos))
+                if (LevelGrid.Instance.GetUnitByGridPosition(testGridPosition))
                 {
+                    // Grid Position already occupied with another Unit
                     continue;
                 }
 
-                gridsInRange.Add(gridPos);
+                validGridPositionList.Add(testGridPosition);
             }
         }
-        return gridsInRange;
+
+        return validGridPositionList;
     }
+
 
     public override string GetActionName()
     {
         return "Move";
     }
+
 }

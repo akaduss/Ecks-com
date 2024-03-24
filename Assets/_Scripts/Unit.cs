@@ -11,6 +11,9 @@ public class Unit : MonoBehaviour
     public MoveAction MoveAction => moveAction;
     private BaseAction[] baseActions;
     public BaseAction[] GetBaseActions => baseActions;
+    private int actionPoints = 2;
+
+    public int ActionPoints => actionPoints;
 
     private void Awake()
     {
@@ -38,4 +41,8 @@ public class Unit : MonoBehaviour
     {
         outline.SetActive(value);
     }
+
+    public bool CanSpendActionPoints(BaseAction baseAction) => actionPoints - baseAction.GetActionPointsCost() >= 0;
+
+    public void SpendActionPoints(int pointAmount) => actionPoints -= pointAmount;
 }
